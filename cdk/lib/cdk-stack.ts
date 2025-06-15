@@ -4,6 +4,7 @@ import { createArtilleryFargateRole } from './artillery-role';
 import { createArtilleryBuildProject } from './build-project';
 import { createArtilleryPipeline } from './pipeline';
 import { createMockApiGateway } from './apigateway';
+import { GitHubCodeStarConnection } from './codestar-connection';
 // import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
 // import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 // import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
@@ -17,11 +18,17 @@ export class CdkStack extends cdk.Stack {
     // Create the IAM role for Artillery/CodeBuild
     const artilleryFargateRole = createArtilleryFargateRole(this);
 
+    const codeStar = new GitHubCodeStarConnection(this, "GHCodeStar-test", {
+        connectionName: 'GHCodestart-test',
+        owner: 'ShakMR',
+        repo: 'cdk-test'
+    })
+
     // Create the CodeBuild project
     const buildProject = createArtilleryBuildProject(this, artilleryFargateRole);
 
     // Create the CodePipeline
-    createArtilleryPipeline(this, buildProject);
+    createArtilleryPipeline(this, buildProject, codeStar.connectionArn);
 
     // Create the API Gateway with a /point mock endpoint
     const api = createMockApiGateway(this);
