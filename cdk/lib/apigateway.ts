@@ -4,7 +4,7 @@ import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 export function createMockApiGateway(scope: Construct): apigateway.RestApi {
   const api = new apigateway.RestApi(scope, 'MockApi', {
     restApiName: 'Mock Example API',
-    description: 'API Gateway with a /point mock endpoint',
+    description: 'API Gateway con un endpoint mock /point para pruebas de Artillery',
     deployOptions: {
       stageName: 'prod',
     },
@@ -16,7 +16,7 @@ export function createMockApiGateway(scope: Construct): apigateway.RestApi {
       {
         statusCode: '200',
         responseTemplates: {
-          'application/json': '{ "message": "This is a mock response from /point" }',
+          'application/json': '{ "message": "Esta es una respuesta mock desde /point" }',
         },
       },
     ],
@@ -33,7 +33,8 @@ export function createMockApiGateway(scope: Construct): apigateway.RestApi {
         },
       },
     ],
+    authorizationType: apigateway.AuthorizationType.NONE,
   });
 
   return api;
-} 
+}
