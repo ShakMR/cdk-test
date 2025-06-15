@@ -14,10 +14,10 @@ export function createArtilleryPipeline(scope: Construct, buildProject: codebuil
     actions: [
       new codepipeline_actions.GitHubSourceAction({
         actionName: 'GitHub_Source',
-        owner: 'GITHUB_OWNER', // TODO: replace with your GitHub username or org
-        repo: 'GITHUB_REPO',   // TODO: replace with your GitHub repo name
-        branch: 'main',        // TODO: replace with your branch name if different
-        oauthToken: cdk.SecretValue.secretsManager('GITHUB_TOKEN_SECRET_NAME'), // TODO: replace with your Secrets Manager secret name
+        owner: 'ShakMR',
+        repo: 'cdk-test',
+        branch: 'primary',
+        oauthToken: cdk.SecretValue.secretsManager('GITHUB_TOKEN'),
         output: sourceOutput,
         trigger: codepipeline_actions.GitHubTrigger.WEBHOOK,
       }),
