@@ -1,0 +1,49 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:*",
+        "ec2:Describe*",
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:PutImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:CreateRepository",
+        "ecr:SetRepositoryPolicy",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:DeleteRepository",
+        "ecr:DeleteRepositoryPolicy",
+        "iam:GetRole",
+        "iam:PassRole",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:List*",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:GetUser",
+        "lambda:*",
+        "logs:*",
+        "s3:*",
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+        "ssm:GetParametersByPath",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:ListAliases",
+        "kms:ListKeys"
+      ],
+      "Resource": "*"
+    }
+  ]
+} 

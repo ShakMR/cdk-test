@@ -1,0 +1,53 @@
+config:
+  target: "http://localhost:3000"  # Change this to your target URL
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 50
+      name: "Warm up phase"
+    - duration: 300
+      arrivalRate: 50
+      name: "Sustained load"
+  processor: "./functions.js"  # Optional: for custom functions
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      User-Agent: "Artillery Load Test"
+
+scenarios:
+  - name: "User journey"
+    weight: 7
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+      - think: 2
+      - post:
+          url: "/api/login"
+          json:
+            username: "{{ $randomString() }}"
+            password: "test123"
+          expect:
+            - statusCode: 200
+            - hasProperty: "token"
+      - think: 1
+      - get:
+          url: "/api/profile"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          expect:
+            - statusCode: 200
+
+  - name: "Public content"
+    weight: 3
+    flow:
+      - get:
+          url: "/api/public"
+          expect:
+            - statusCode: 200
+      - think: 1
+      - get:
+          url: "/api/features"
+          expect:
+            - statusCode: 200
