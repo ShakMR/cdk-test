@@ -16,7 +16,7 @@ export class CdkStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create the IAM role for Artillery/CodeBuild
-    const artilleryFargateRole = createArtilleryFargateRole(this);
+    const artilleryFargateRole = createArtilleryFargateRole(this, 'ArtilleryFargateRole', props?.env?.account!);
 
     const codeStar = new GitHubCodeStarConnection(this, "GHCodeStar-test", {
         connectionName: 'GHCodestart-test',

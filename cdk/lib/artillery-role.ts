@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 
-export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFargateRole'): iam.Role {
+export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFargateRole', account: string): iam.Role {
   const role = new iam.Role(scope, id, {
     assumedBy: new iam.ServicePrincipal('codebuild.amazonaws.com'),
     description: 'Role for CodeBuild to run Artillery tests in Fargate',
@@ -12,7 +12,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     sid: 'CreateOrGetECSRole',
     effect: iam.Effect.ALLOW,
     actions: ['iam:CreateRole', 'iam:GetRole', 'iam:AttachRolePolicy'],
-    resources: [`arn:aws:iam::${scope.node.tryGetContext('account')}:role/artilleryio-ecs-worker-role`]
+    resources: [`arn:aws:iam::${account}:role/artilleryio-ecs-worker-role`]
   }));
 
   // CreateECSPolicy
@@ -20,7 +20,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     sid: 'CreateECSPolicy',
     effect: iam.Effect.ALLOW,
     actions: ['iam:CreatePolicy'],
-    resources: [`arn:aws:iam::${scope.node.tryGetContext('account')}:policy/artilleryio-ecs-worker-policy`]
+    resources: [`arn:aws:iam::${account}:policy/artilleryio-ecs-worker-policy`]
   }));
 
   // CreateServiceLinkedRole
@@ -39,7 +39,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
   role.addToPolicy(new iam.PolicyStatement({
     effect: iam.Effect.ALLOW,
     actions: ['iam:PassRole'],
-    resources: [`arn:aws:iam::${scope.node.tryGetContext('account')}:role/artilleryio-ecs-worker-role`]
+    resources: [`arn:aws:iam::${account}:role/artilleryio-ecs-worker-role`]
   }));
 
   // SQSPermissions
@@ -47,7 +47,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     sid: 'SQSPermissions',
     effect: iam.Effect.ALLOW,
     actions: ['sqs:*'],
-    resources: [`arn:aws:sqs:*:${scope.node.tryGetContext('account')}:artilleryio*`]
+    resources: [`arn:aws:sqs:*:${account}:artilleryio*`]
   }));
 
   // SQSListQueues
@@ -76,7 +76,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     sid: 'ECSPermissionsScopedToCluster',
     effect: iam.Effect.ALLOW,
     actions: ['ecs:DescribeClusters', 'ecs:ListContainerInstances'],
-    resources: [`arn:aws:ecs:*:${scope.node.tryGetContext('account')}:cluster/*`]
+    resources: [`arn:aws:ecs:*:${account}:cluster/*`]
   }));
 
   // ECSPermissionsScopedWithCondition
@@ -95,7 +95,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     ],
     conditions: {
       'ArnEquals': {
-        'ecs:cluster': `arn:aws:ecs:*:${scope.node.tryGetContext('account')}:cluster/*`
+        'ecs:cluster': `arn:aws:ecs:*:${account}:cluster/*`
       }
     },
     resources: ['*']
@@ -136,14 +136,14 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     sid: 'LogsPermissions',
     effect: iam.Effect.ALLOW,
     actions: ['logs:PutRetentionPolicy'],
-    resources: [`arn:aws:logs:*:${scope.node.tryGetContext('account')}:log-group:artilleryio-log-group/*`]
+    resources: [`arn:aws:logs:*:${account}:log-group:artilleryio-log-group/*`]
   }));
 
   // SecretsManagerPermissions
   role.addToPolicy(new iam.PolicyStatement({
     effect: iam.Effect.ALLOW,
     actions: ['secretsmanager:GetSecretValue'],
-    resources: [`arn:aws:secretsmanager:*:${scope.node.tryGetContext('account')}:secret:artilleryio/*`]
+    resources: [`arn:aws:secretsmanager:*:${account}:secret:artilleryio/*`]
   }));
 
   // SSMPermissions
@@ -165,7 +165,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
       'ssm:GetParametersByPath'
     ],
     resources: regions.map(region => 
-      `arn:aws:ssm:${region}:${scope.node.tryGetContext('account')}:parameter/artilleryio/*`
+      `arn:aws:ssm:${region}:${account}:parameter/artilleryio/*`
     )
   }));
 
