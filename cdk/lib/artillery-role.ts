@@ -7,7 +7,8 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     description: 'Role for CodeBuild to run Artillery tests in Fargate',
   });
 
-  // CreateOrGetECSRole
+  role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonECS_FullAccess'));
+
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'CreateOrGetECSRole',
     effect: iam.Effect.ALLOW,
@@ -15,7 +16,6 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     resources: [`arn:aws:iam::${account}:role/artilleryio-ecs-worker-role`]
   }));
 
-  // CreateECSPolicy
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'CreateECSPolicy',
     effect: iam.Effect.ALLOW,
@@ -23,7 +23,6 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     resources: [`arn:aws:iam::${account}:policy/artilleryio-ecs-worker-policy`]
   }));
 
-  // CreateServiceLinkedRole
   role.addToPolicy(new iam.PolicyStatement({
     effect: iam.Effect.ALLOW,
     actions: ['iam:CreateServiceLinkedRole'],
@@ -35,14 +34,12 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     }
   }));
 
-  // PassRole
   role.addToPolicy(new iam.PolicyStatement({
     effect: iam.Effect.ALLOW,
     actions: ['iam:PassRole'],
     resources: [`arn:aws:iam::${account}:role/artilleryio-ecs-worker-role`]
   }));
 
-  // SQSPermissions
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'SQSPermissions',
     effect: iam.Effect.ALLOW,
@@ -50,7 +47,6 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     resources: [`arn:aws:sqs:*:${account}:artilleryio*`]
   }));
 
-  // SQSListQueues
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'SQSListQueues',
     effect: iam.Effect.ALLOW,
@@ -58,7 +54,6 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     resources: ['*']
   }));
 
-  // ECSPermissionsGeneral
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'ECSPermissionsGeneral',
     effect: iam.Effect.ALLOW,
@@ -71,7 +66,6 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     resources: ['*']
   }));
 
-  // ECSPermissionsScopedToCluster
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'ECSPermissionsScopedToCluster',
     effect: iam.Effect.ALLOW,
@@ -79,7 +73,6 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     resources: [`arn:aws:ecs:*:${account}:cluster/*`]
   }));
 
-  // ECSPermissionsScopedWithCondition
   role.addToPolicy(new iam.PolicyStatement({
     sid: 'ECSPermissionsScopedWithCondition',
     effect: iam.Effect.ALLOW,
@@ -153,7 +146,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
     'ap-south-1', 'ap-east-1', 'ap-northeast-1', 'ap-northeast-2',
     'ap-southeast-1', 'ap-southeast-2', 'me-south-1', 'sa-east-1'
   ];
-  
+
   role.addToPolicy(new iam.PolicyStatement({
     effect: iam.Effect.ALLOW,
     actions: [
@@ -164,7 +157,7 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
       'ssm:DescribeParameters',
       'ssm:GetParametersByPath'
     ],
-    resources: regions.map(region => 
+    resources: regions.map(region =>
       `arn:aws:ssm:${region}:${account}:parameter/artilleryio/*`
     )
   }));
@@ -181,4 +174,4 @@ export function createArtilleryFargateRole(scope: Construct, id = 'ArtilleryFarg
   }));
 
   return role;
-} 
+}
